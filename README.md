@@ -47,6 +47,47 @@ module.exports = {
 
 [多个入口](https://github.com/songjinzhong/webpack-learning/tree/master/多个入口/)。
 
+## jsx 例子
+
+webpack 支持 babel-jsx，可以写 jsx 格式的代码，但是要在 webpack.config.js 里面要设置 babel 转换，在 module.loaders 要设置加载 babel-loader 处理 jsx 语法：
+
+```
+module.exports = {
+  entry: './main.jsx',
+  output: {
+    filename: 'bundle.js'
+  },
+  module: {
+    loaders:[
+      {
+        test: /\.js[x]?$/,
+        exclude: /node_modules/,
+        loader: 'babel-loader?presets[]=es2015&presets[]=react',
+      },
+    ]
+  }
+};
+```
+## css 例子
+
+css 的 loader 和 js 一样，用法如下，也是一个 exports 文件，设置 loaders：
+
+```
+module.exports = {
+  entry: './main.js',
+  output: {
+    filename: 'bundle.js'
+  },
+  module: {
+    loaders:[
+      { test: /\.css$/, loader: 'style-loader!css-loader' },
+    ]
+  }
+};
+```
+
+css-loader 用来读 css 文件，style-loader 用来像 html 中插入 css，所以最后 html 调用的时候，也只是调用 `<script type="text/javascript" src="bundle.js"></script>`
+
 ## 参考
 
 >[ruanyf/webpack-demos](https://github.com/ruanyf/webpack-demos)
