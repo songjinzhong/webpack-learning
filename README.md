@@ -142,7 +142,33 @@ module.exports = {
 };
 ```
 
-## 
+## 创建 html 和自动打开浏览器
+
+当我第一次看到这个功能，也是吓了一跳，居然还提供自动打开浏览器的插件，真是强大。需要借助 `open-browser-webpack-plugin` 来实现，配置文件：
+
+```javascript
+// 自动写 index.html
+var HtmlwebpackPlugin = require('html-webpack-plugin');
+var OpenBrowserPlugin = require('open-browser-webpack-plugin');
+
+module.exports = {
+  entry: './main.js',
+  output: {
+    filename: 'bundle.js'
+  },
+  plugins: [
+    new HtmlwebpackPlugin({
+      title: 'Webpack-demos',
+      filename: 'index.html'
+    }),
+    new OpenBrowserPlugin({
+      url: 'http://localhost:8080'
+    })
+  ]
+};
+```
+
+有了这两个配置文件，测试都不需要写 index.html，只需要 main.js 了，很强大。对于喜爱磁盘的人士来说，真是只用内存大法好（哈哈）。
 
 ## 参考
 
