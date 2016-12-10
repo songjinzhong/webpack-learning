@@ -51,7 +51,7 @@ module.exports = {
 
 webpack 支持 babel-jsx，可以写 jsx 格式的代码，但是要在 webpack.config.js 里面要设置 babel 转换，在 module.loaders 要设置加载 babel-loader 处理 jsx 语法：
 
-```
+```javascript
 module.exports = {
   entry: './main.jsx',
   output: {
@@ -72,7 +72,7 @@ module.exports = {
 
 css 的 loader 和 js 一样，用法如下，也是一个 exports 文件，设置 loaders：
 
-```
+```javascript
 module.exports = {
   entry: './main.js',
   output: {
@@ -87,6 +87,38 @@ module.exports = {
 ```
 
 css-loader 用来读 css 文件，style-loader 用来像 html 中插入 css，所以最后 html 调用的时候，也只是调用 `<script type="text/javascript" src="bundle.js"></script>`
+
+## image
+
+对于 image 也很有意思，比如小图片，可以直接用 base64 在html 中直接存储，好处就是不必要的 http 请求，大图片，会生成相对应的 hash 文件名，可以在配置文件里面设置图片 base64 编码的最大限制：
+
+```javascript
+module.exports = {
+  entry: './main.js',
+  output: {
+    filename: 'bundle.js'
+  },
+  module: {
+    loaders:[
+      { test: /\.(png|jpg)$/, loader: 'url-loader?limit=8192' }
+    ]
+  }
+};
+```
+
+加载插件 url-loader，limit 限制 8kb，在 main.js 中可以使用如下语句来加载 image：
+
+```javascript
+var img1 = document.createElement("img");
+img1.src = require("./small.png");
+document.body.appendChild(img1);
+
+var img2 = document.createElement("img");
+img2.src = require("./big.png");
+document.body.appendChild(img2);
+```
+
+对，没错，就是 require，`img2.src = require("./big.png");`。
 
 ## 参考
 
