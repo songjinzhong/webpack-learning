@@ -120,6 +120,30 @@ document.body.appendChild(img2);
 
 对，没错，就是 require，`img2.src = require("./big.png");`。
 
+## 压缩插件
+
+gulp 中可以通过压缩插件将 js css 压缩以占用更少的空间，webpack 也支持，还是配置参数：
+
+```javascript
+var webpack = require('webpack');
+var uglifyJsPlugin = webpack.optimize.UglifyJsPlugin;
+module.exports = {
+  entry: './main.js',
+  output: {
+    filename: 'bundle.js'
+  },
+  plugins: [
+    new uglifyJsPlugin({
+      compress: {
+        warnings: false
+      }
+    })
+  ]
+};
+```
+
+## 
+
 ## 参考
 
 >[ruanyf/webpack-demos](https://github.com/ruanyf/webpack-demos)
