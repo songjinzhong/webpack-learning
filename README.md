@@ -278,7 +278,58 @@ module.exports = {
 };
 ```
 
-plugins 已经说的很清楚了，把全局变量的值都给赋值了
+plugins 已经说的很清楚了，把全局变量的值都给赋值了。
+
+## 10：全局变量
+
+除了全局的插件，还可以用全局的变量，此时需要一个 data.js 的数据文件，
+
+```javascript
+var data = 'Hello World';
+```
+
+在 webpack.config.js 里面配置 externals：
+
+```javascript
+// webpack.config.js
+module.exports = {
+  entry: './main.jsx',
+  output: {
+    filename: 'bundle.js'
+  },
+  module: {
+    loaders:[
+      {
+        test: /\.js[x]?$/,
+        exclude: /node_modules/,
+        loader: 'babel-loader',
+        query: {
+          presets: ['es2015', 'react']
+        }
+      },
+    ]
+  },
+  externals: {
+    // require('data') is external and available
+    //  on the global var data
+    'data': 'data'
+  }
+};
+```
+
+可以在 main.jsx 中使用 data.js：
+
+```javascript
+// main.jsx
+var data = require('data');
+var React = require('react');
+var ReactDOM = require('react-dom');
+
+ReactDOM.render(
+  <h1>{data}</h1>,
+  document.body
+);
+```
 
 ## 参考
 
