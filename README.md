@@ -170,6 +170,40 @@ module.exports = {
 
 有了这两个配置文件，测试都不需要写 index.html，只需要 main.js 了，很强大。对于喜爱磁盘的人士来说，真是只用内存大法好（哈哈）。
 
+## 开发环境
+
+有时候，需要在开发环境下面进行一些调试，但是又不希望出现在上线环境中，这个时候，可以通过 webpack 的 environment 来设置。
+
+比如，在 main.js 中，可以设置 dev 变量来识别当前环境是否是开发环境，
+
+```javascript
+document.write('<h1>Hello World</h1>');
+
+if (__DEV__) {
+  document.write(new Date());
+}
+```
+
+然后在 webpack.config.js 设置开发变量，`__DEV__` 从命令行里来获得：
+
+```javascript
+var webpack = require('webpack');
+
+var devFlagPlugin = new webpack.DefinePlugin({
+  __DEV__: JSON.stringify(JSON.parse(process.env.DEBUG || 'false'))
+});
+
+module.exports = {
+  entry: './main.js',
+  output: {
+    filename: 'bundle.js'
+  },
+  plugins: [devFlagPlugin]
+};
+```
+
+使用的时候，就可以设置 `process.env.DEBUG` 的值，通过命令 `env DEBUG=true webpack-dev-server` 来启动。
+
 ## 参考
 
 >[ruanyf/webpack-demos](https://github.com/ruanyf/webpack-demos)
