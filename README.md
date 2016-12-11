@@ -331,6 +331,49 @@ ReactDOM.render(
 );
 ```
 
+## 11：热更新
+
+到现在还有一个疑惑，就是热更新和监听的区别。之前用 gulp 编译 js 文件，监听到 js 代码发生改变，gulp 会重新编译生成的 js 文件，用户需要手动刷新浏览器，才能浏览到发生的变化，而热更新在监听到 js 代码发生了变化，会自动重新执行 js 代码，而不需要手动刷新浏览器。
+
+有两种方法可以实现热更新，一种是用命令行带参数的方法：
+
+```
+webpack-dev-server --hot --inline
+```
+
+第二种方法就是使用配置文件：
+
+```javascript
+var webpack = require('webpack');
+var path = require('path');
+
+module.exports = {
+  entry: [
+    'webpack/hot/dev-server',
+    'webpack-dev-server/client?http://localhost:8080',
+    './index.js'
+  ],
+  output: {
+    filename: 'bundle.js',
+    publicPath: '/static/'
+  },
+  plugins: [
+    new webpack.HotModuleReplacementPlugin()
+  ],
+  module: {
+    loaders: [{
+      test: /\.jsx?$/,
+      exclude: /node_modules/,
+      loader: 'babel-loader',
+      query: {
+        presets: ['es2015', 'react']
+      },
+      include: path.join(__dirname, '.')
+    }]
+  }
+};
+```
+
 ## 参考
 
 >[ruanyf/webpack-demos](https://github.com/ruanyf/webpack-demos)
