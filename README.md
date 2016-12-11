@@ -3,7 +3,7 @@ my webpack projects, learning and demo
 
 webpack 到底有多么优秀，和 gulp 相比，有点在哪里？
 
-## 认识 webpack
+## 1：认识 webpack
 
 webpack 也是构建工具，需要一个配置文件 webpack.config.js，改配置文件采用 es6 的 import 和 exports 方法，一个简单的配置文件信息如下：
 
@@ -27,7 +27,7 @@ exports 的对象中有 entry 表示处理 main.js，然后输出文件是 bundl
 
 而 webpack 的诞生就是为了解决模块化开发和静态资源文件的处理。先来说说模块化开发，无论是 AMD 还是 CommonJS，甚至是 ES6 中的 module（即前面提到的 import 和 exports），都给予支持。正如大部分人认可的那样，webpack 的天生就涌来适配 react 的，打包图片和 css 文件，这不巧了吗。
 
-## 多个入口
+## 2：多个入口
 
 如前文的 demo，打包可以设置两个入口，单独打包两个文件，比如
 
@@ -47,7 +47,7 @@ module.exports = {
 
 [多个入口](https://github.com/songjinzhong/webpack-learning/tree/master/多个入口/)。
 
-## jsx 例子
+## 3：jsx 例子
 
 webpack 支持 babel-jsx，可以写 jsx 格式的代码，但是要在 webpack.config.js 里面要设置 babel 转换，在 module.loaders 要设置加载 babel-loader 处理 jsx 语法：
 
@@ -68,7 +68,7 @@ module.exports = {
   }
 };
 ```
-## css 例子
+## 4：css 例子
 
 css 的 loader 和 js 一样，用法如下，也是一个 exports 文件，设置 loaders：
 
@@ -88,7 +88,7 @@ module.exports = {
 
 css-loader 用来读 css 文件，style-loader 用来像 html 中插入 css，所以最后 html 调用的时候，也只是调用 `<script type="text/javascript" src="bundle.js"></script>`
 
-## image
+## 5：image
 
 对于 image 也很有意思，比如小图片，可以直接用 base64 在html 中直接存储，好处就是不必要的 http 请求，大图片，会生成相对应的 hash 文件名，可以在配置文件里面设置图片 base64 编码的最大限制：
 
@@ -120,7 +120,7 @@ document.body.appendChild(img2);
 
 对，没错，就是 require，`img2.src = require("./big.png");`。
 
-## 压缩插件
+## 6：压缩插件
 
 gulp 中可以通过压缩插件将 js css 压缩以占用更少的空间，webpack 也支持，还是配置参数：
 
@@ -142,7 +142,7 @@ module.exports = {
 };
 ```
 
-## 创建 html 和自动打开浏览器
+## 7：创建 html 和自动打开浏览器
 
 当我第一次看到这个功能，也是吓了一跳，居然还提供自动打开浏览器的插件，真是强大。需要借助 `open-browser-webpack-plugin` 来实现，配置文件：
 
@@ -170,7 +170,7 @@ module.exports = {
 
 有了这两个配置文件，测试都不需要写 index.html，只需要 main.js 了，很强大。对于喜爱磁盘的人士来说，真是只用内存大法好（哈哈）。
 
-## 开发环境
+## 8：开发环境
 
 有时候，需要在开发环境下面进行一些调试，但是又不希望出现在上线环境中，这个时候，可以通过 webpack 的 environment 来设置。
 
@@ -203,6 +203,82 @@ module.exports = {
 ```
 
 使用的时候，就可以设置 `process.env.DEBUG` 的值，通过命令 `env DEBUG=true webpack-dev-server` 来启动。
+
+## 9：chunks
+
+chunks 的好处就是代码可以重复利用，将一个大项目文件划分为单独的小部分，管理方便，在 main.js 里面调用 a.js：
+
+```javascript
+require.ensure(['./a'], function(require) {
+  var content = require('./a');
+  document.open();
+  document.write('<h1>' + content + '</h1>');
+  document.close();
+});
+```
+
+然后在 a.js 里面写代码：
+
+```
+// a.js
+module.exports = 'Hello World';
+```
+
+运行 webpack-dev-server 就可以看到 hello world。
+
+**CommonsChunkPlugin**，webpack 还提供 CommonsChunkPlugin，用来对公共模块进行优化。
+
+如果我们需要在代码中引入 jquery 库，也可以进行配置，如果需要在单个文件中引入：
+
+```javascript
+// webpack.config.js
+var webpack = require('webpack');
+module.exports = {
+  entry: {
+    app: './main.js',
+    vendor: ['jquery'],
+  },
+  output: {
+    filename: 'bundle.js'
+  },
+  plugins: [
+    new webpack.optimize.CommonsChunkPlugin(/* chunkName= */'vendor', /* filename= */'vendor.js')
+  ]
+};
+
+// main.js
+var $ = require('jquery');
+$('body').text('hello world');
+```
+
+如果需要在所有文件中都引入 jquery，配置文件需要这样写：
+
+```javascript
+// main.js
+$('h1').text('Hello World');
+
+
+// webpack.config.js
+var webpack = require('webpack');
+
+module.exports = {
+  entry: {
+    app: './main.js'
+  },
+  output: {
+    filename: 'bundle.js'
+  },
+  plugins: [
+    new webpack.ProvidePlugin({
+      $: "jquery",
+      jQuery: "jquery",
+      "window.jQuery": "jquery"
+    })
+  ]
+};
+```
+
+plugins 已经说的很清楚了，把全局变量的值都给赋值了
 
 ## 参考
 
